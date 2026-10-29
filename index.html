@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Balloons</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #9bc9df;
+    }
+
+    .landing-journey { height: 420svh; }
+
+    .landing-page {
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100svh;
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      overflow: hidden;
+      isolation: isolate;
+      background: #061c42 url("menu-balloon-sky.png") center / cover no-repeat;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .transition-balloon {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: var(--cover-size, 200vmax);
+      height: calc(var(--cover-size, 200vmax) * 1.2);
+      border-radius: 50% 50% 47% 47%;
+      transform: translate(-50%, -50%) scale(var(--balloon-scale, 1));
+      will-change: transform;
+      pointer-events: none;
+      z-index: -1;
+      background: url("landing-balloon-city.png") center / var(--art-width, 100vw) var(--art-height, 100vh) no-repeat;
+
+    }
+
+    .transition-balloon::before {
+      content: "";
+      position: absolute;
+      top: calc(100% - 2px);
+      left: 50%;
+      width: 5%;
+      height: 5%;
+      background: #df8170;
+      clip-path: polygon(50% 0, 100% 100%, 0 100%);
+      transform: translateX(-50%);
+    }
+
+    .transition-balloon::after {
+      content: "";
+      position: absolute;
+      top: 104%;
+      left: 50%;
+      width: 0.2%;
+      height: 40%;
+      background: #fff9;
+    }
+
+    .logo {
+      position: absolute;
+      top: 32px;
+      left: 42px;
+
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .content {
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .content p {
+      color: #fff;
+      font-size: clamp(20px, 2.7vw, 34px);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .content h1 {
+      color: #fff;
+      font-size: clamp(52px, 8.3vw, 108px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      margin-bottom: 30px;
+    }
+
+    .landing-instructions {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(1000px, calc(100% - 48px));
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-family: inherit;
+      font-size: clamp(30px, 5.2vw, 68px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -.035em;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .instruction-line { display: block; margin: .15em 0; }
+    .instruction-word { display: inline-block; opacity: 0; }
+
+    .scroll-hint {
+      position: absolute;
+      left: 50%;
+      bottom: max(30px, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 23px;
+      border: 1px solid rgba(255, 255, 255, .65);
+      border-radius: 40px;
+      background: rgba(4, 18, 41, .9);
+      box-shadow: 0 5px 24px rgba(0, 0, 0, .3);
+      color: #fff;
+      font-size: clamp(12px, 1.1vw, 15px);
+      font-weight: 700;
+      letter-spacing: .08em;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .scroll-hint .scroll-mouse { display: block; position: relative; width: 22px; height: 33px; border: 2px solid #ffe16a; border-radius: 12px; flex-shrink: 0; }
+    .scroll-mouse::after { content: ""; position: absolute; left: 50%; top: 6px; width: 3px; height: 7px; border-radius: 2px; background: #ffe16a; transform: translateX(-50%); animation: scroll-wheel 1.5s ease-in-out infinite; }
+    .scroll-hint .scroll-arrow { display: block; color: #ffe16a; font-size: 24px; line-height: 1; animation: scroll-nudge 1.5s ease-in-out infinite; }
+    @keyframes scroll-nudge { 50% { transform: translateY(5px); } }
+    @keyframes scroll-wheel { 0%, 100% { opacity: .4; transform: translate(-50%, 0); } 50% { opacity: 1; transform: translate(-50%, 6px); } }
+    @media (prefers-reduced-motion: reduce) { .scroll-hint .scroll-arrow, .scroll-mouse::after { animation: none; } }
+    .skip-intro { position: fixed; top: 12px; left: 50%; transform: translate(-50%, -200%); z-index: 10000; color: #183346; background: white; padding: 12px 20px; border-radius: 4px; }
+    .skip-intro:focus { transform: translate(-50%, 0); }
+
+    .balloon-layer {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .cursor-balloon {
+      position: absolute;
+      width: var(--size);
+      height: calc(var(--size) * 1.28);
+      border-radius: 50% 50% 47% 47%;
+      background: radial-gradient(ellipse at 30% 25%, rgba(255, 255, 255, 0.75), transparent 40%), var(--balloon-color);
+      box-shadow: inset -3px -4px 6px rgba(0, 0, 0, 0.12);
+      animation: balloon-float 2s ease-out forwards;
+    }
+
+    .cursor-balloon::before {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-bottom: 6px solid var(--balloon-color);
+    }
+
+    .cursor-balloon::after {
+      content: "";
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 50%;
+      width: 1px;
+      height: 25px;
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    @keyframes balloon-float {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+      15% { opacity: 1; }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--drift)), -200px) rotate(var(--rotation)) scale(1);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .logo {
+        top: 24px;
+        left: 24px;
+      }
+
+      .content h1 {
+        letter-spacing: -1px;
+      }
+
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cursor-balloon { display: none; }
+      .scroll-hint span { animation: none; }
+      .transition-balloon { will-change: auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-intro" href="choose.html">Skip intro — choose an object</a>
+  <main class="landing-journey" id="landing-journey">
+  <section class="landing-page" aria-label="Scroll down to choose an object">
+    <div class="transition-balloon" id="transition-balloon" aria-hidden="true"></div>
+    <div class="logo">LIFTOFF</div>
+
+    <div class="content">
+      <p>LET’S BLOW UP SOME</p>
+      <h1>BALLOONS!</h1>
+
+
+    </div>
+    <div class="landing-instructions" id="landing-instructions">
+      <p aria-label="Easy. Just lift it in under 30 seconds! Watch out for incoming birds. Good luck!">
+        <span class="instruction-line" aria-hidden="true">Easy.</span>
+        <span class="instruction-line" aria-hidden="true">Just lift it in under 30 seconds!</span>
+        <span class="instruction-line" aria-hidden="true">Watch out for incoming birds.</span>
+        <span class="instruction-line" aria-hidden="true">Good luck!</span>
+      </p>
+    </div>
+    <div class="scroll-hint" id="scroll-hint"><span class="scroll-mouse" aria-hidden="true"></span>SCROLL TO LIFT OFF<span class="scroll-arrow" aria-hidden="true">↓</span></div>
+  </section>
+  </main>
+  <noscript><a href="choose.html">Choose an object →</a></noscript>
+
+  <div class="balloon-layer" id="balloon-layer" aria-hidden="true"></div>
+
+  <script>
+    const balloonLayer = document.getElementById("balloon-layer");
+    const balloonColors = ["#ff5c8a", "#ffca3a", "#8ac926", "#35baff", "#b76cff", "#ff914d"];
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let lastBalloonTime = 0;
+
+    document.addEventListener("pointermove", function (event) {
+      if (event.pointerType === "touch" || reducedMotion.matches) return;
+      const now = performance.now();
+      if (now - lastBalloonTime < 65) return;
+      lastBalloonTime = now;
+      const balloon = document.createElement("div");
+      balloon.className = "cursor-balloon";
+      const color = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+      const size = 18 + Math.random() * 14;
+      const drift = Math.random() * 100 - 50;
+      const rotation = Math.random() * 40 - 20;
+      balloon.style.left = event.clientX + "px";
+      balloon.style.top = event.clientY + "px";
+      balloon.style.setProperty("--balloon-color", color);
+      balloon.style.setProperty("--size", size + "px");
+      balloon.style.setProperty("--drift", drift + "px");
+      balloon.style.setProperty("--rotation", rotation + "deg");
+      balloonLayer.appendChild(balloon);
+      balloon.addEventListener("animationend", function () { balloon.remove(); }, { once: true });
+    });
+
+    reducedMotion.addEventListener("change", function (event) {
+      if (event.matches) balloonLayer.replaceChildren();
+    });
+  </script>
+  <script src="landing.js"></script>
+</body>
+</html>

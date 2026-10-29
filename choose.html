@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Choose your favourite — Balloons</title>
+  <link rel="stylesheet" href="minigame.css">
+  <script>
+    if (new URLSearchParams(location.search).get('intro') === 'balloon') {
+      document.documentElement.classList.add('balloon-arrival');
+    }
+  </script>
+</head>
+<body class="selection-menu">
+  <div class="arrival-balloon" aria-hidden="true"></div>
+  <main class="selection-page">
+    <header><a class="back-link" href="index.html">← Back</a><span class="wordmark" id="selected-mode">LIFTOFF</span></header>
+    <h1>Choose your favourite!</h1>
+    <div class="choice-grid" id="choice-grid" aria-label="Choose an object"></div>
+  </main>
+  <script src="missions.js"></script>
+  <script src="modes.js"></script>
+  <script src="selection.js"></script>
+</body>
+</html>

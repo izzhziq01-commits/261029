@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 300" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="far" x2="0" y2="1"><stop stop-color="#a4bca2"/><stop offset="1" stop-color="#bdd0ae"/></linearGradient>
+    <linearGradient id="field" x2="0" y2="1"><stop stop-color="#abc382"/><stop offset=".55" stop-color="#90b267"/><stop offset="1" stop-color="#769651"/></linearGradient>
+    <linearGradient id="path" x2="0" y2="1"><stop stop-color="#d4c8a5"/><stop offset="1" stop-color="#c4b58d"/></linearGradient>
+  </defs>
+  <path d="M0 85Q130 10 280 67T580 50T880 62T1180 43T1440 73V300H0Z" fill="url(#far)"/>
+  <path d="M0 112Q240 82 480 104T960 105T1440 100V300H0Z" fill="url(#field)"/>
+  <path d="M710 112Q760 155 660 210T590 300H830Q760 246 795 208T730 112Z" fill="url(#path)" opacity=".65"/>
+  <g fill="#668346" opacity=".4">
+    <path d="m85 170-4-12 9 9 4-14 2 17zm240 63-3-15 8 10 5-14-1 19zm740-70-4-11 9 7 3-12 2 16zm230 94-4-14 9 10 6-18-1 22zm-1120 30-4-17 9 13 6-17-1 21z"/>
+  </g>
+  <g fill="#c1d394" opacity=".5"><ellipse cx="220" cy="143" rx="60" ry="2"/><ellipse cx="1100" cy="190" rx="110" ry="3"/><ellipse cx="410" cy="275" rx="90" ry="3"/></g>
+</svg>
